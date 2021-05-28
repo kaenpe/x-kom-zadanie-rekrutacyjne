@@ -4,21 +4,35 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { SlotsContext } from "../context/SlotsContext";
 import { useRouter } from "next/dist/client/router";
 import * as Yup from "yup";
+
+const ErrorRow = styled.div`
+	margin: ${({ error }) => (error ? "1rem 0" : 0)};
+	transition: margin 0.3s ease-out;
+	align-items: center;
+`;
 const StyledContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	width: 100vw;
 	height: 100vh;
-	.form {
+	form {
 		display: flex;
 		flex-direction: column;
+	}
+	input {
+		height: 1.5rem;
 	}
 	label {
 		margin-right: 1rem;
 	}
 	.row {
 		margin: 1rem 0;
+		display: flex;
+		align-items: center;
+	}
+	.error {
+		color: red;
 	}
 	button {
 		width: 100%;
@@ -61,13 +75,15 @@ const Welcome = () => {
 					}, 500);
 				}}
 			>
-				{({ isSubmitting }) => (
+				{({ isSubmitting, errors }) => (
 					<Form className="form">
 						<div className="row">
 							<label htmlFor="slots">Liczba miejsc:</label>
 							<Field type="number" name="slots" />
-							<ErrorMessage name="slots" component="div" />
 						</div>
+						<ErrorRow error={errors.slots}>
+							<ErrorMessage className="error" name="slots" component="div" />
+						</ErrorRow>
 						<div className="row">
 							<Field type="checkbox" name="nextTo" />
 							<label htmlFor="nextTo">Czy miejsca mają być obok siebie?</label>
