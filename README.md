@@ -1,34 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Aplikacja do zarządzania rezerwacją miejsc.
 
-## Getting Started
+### Cel zadania
 
-First, run the development server:
+Celem zadania jest stworzenie aplikacji internetowej, wykorzystując biblioteki: React, Redux (lub inne rozwiązanie implementujące architekturę flux) oraz dowolny wybrany przez siebie istniejący design system (np. ant.design).
+W repozytorium, w katalogu mockups znajdziesz wizualizacje poszczególnych stron, które powinny zostać zaimplementowane w aplikacji.
 
-```bash
-npm run dev
-# or
-yarn dev
+Mile widziane będzie pokrycie kluczowych funkcjonalności testami jednostkowymi.
+
+Rozpoczynając prace polecamy skorzystać z generatora dostarczonego przez React, wykorzystując szablon redux:
+
+```
+npx create-react-app my-app --template redux
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Wytyczne
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+W pierwszym etapie aplikacja powinna pytać o liczbę miejsc do zarezerwowania oraz czy miejsca powinny być obok siebie (patrz wizualizacja poniżej).
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+![mockups/page_1.png](mockups/page_1.png)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Następnie należy pobrać z API dostępne miejsca. W repozytorium dostępny jest przykładowy serwer, który można uruchomić za pomocą:
 
-## Learn More
+```
+npm run api
+```
 
-To learn more about Next.js, take a look at the following resources:
+Powyżej wspomniany serwer dostarcza endpoint `/seats`, który zwraca wszystkie miejsca oraz ich położenie. Jedno miejsce posiada następujące informacje:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```javascript
+const seat = {
+	id: "s01", // id miejsca
+	cords: {
+		// koordynaty, liczone od zera
+		x: 0,
+		y: 1,
+	},
+	reserved: false, // boolean - czy miejsce jest już zarezerwowane
+};
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Na podstawie tych danych, powinna zostać wyświetlona graficzna reprezentacja sali (patrz wizualizacja poniżej).
+![mockups/page_2.png](mockups/page_2.png)
 
-## Deploy on Vercel
+Aplikacja na tym etapie powinna proponować miejsca użytkownikowi. Jeżeli została wybrana opcja, że miejsca powinny znajdować się obok siebie, należy zaproponować takie miejsca, które nie będą oddzielone od siebie pustą przestrzenią oraz innym, już zajętym miejscem.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Dodatkowo widok sali powinien być "klikalny" - powinna istnieć możliwość edycji i ponownego wyboru miejsc. Operacje użytkownik zatwierdza przyciskiem „Rezerwuj” (stan rezerwacji należy zapamiętać wyłącznie lokalnie, w store).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Na koniec powinna zostać wyświetlona strona z podsumowaniem (wizualizacja poniżej)
+
+![mockups/page_3.png](mockups/page_3.png)

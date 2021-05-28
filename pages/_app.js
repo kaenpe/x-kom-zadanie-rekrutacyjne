@@ -1,7 +1,28 @@
-import '../styles/globals.css'
+import { createGlobalStyle, ThemeProvider } from "styled-components";
+import SlotsContextProvider from "../context/SlotsContext";
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+`;
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+const theme = {
+	colors: {
+		primary: "#0070f3",
+	},
+};
+
+export default function App({ Component, pageProps }) {
+	return (
+		<>
+			<GlobalStyle />
+			<SlotsContextProvider>
+				<ThemeProvider theme={theme}>
+					<Component {...pageProps} />
+				</ThemeProvider>
+			</SlotsContextProvider>
+		</>
+	);
 }
-
-export default MyApp
