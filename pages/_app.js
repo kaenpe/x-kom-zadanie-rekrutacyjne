@@ -1,5 +1,6 @@
 import { createGlobalStyle, ThemeProvider } from "styled-components";
-import SlotsContextProvider from "../context/SlotsContext";
+import { ChoiceContextProvider } from "../context/ChoiceContext";
+import { SlotsContextProvider } from "../context/SlotsContext";
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
@@ -19,9 +20,11 @@ export default function App({ Component, pageProps }) {
 		<>
 			<GlobalStyle />
 			<SlotsContextProvider>
-				<ThemeProvider theme={theme}>
-					<Component {...pageProps} />
-				</ThemeProvider>
+				<ChoiceContextProvider>
+					<ThemeProvider theme={theme}>
+						<Component {...pageProps} />
+					</ThemeProvider>
+				</ChoiceContextProvider>
 			</SlotsContextProvider>
 		</>
 	);

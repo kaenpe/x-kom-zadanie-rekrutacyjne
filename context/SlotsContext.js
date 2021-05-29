@@ -8,5 +8,3 @@ export const SlotsContextProvider = ({ children }) => {
 		<SlotsContext.Provider value={value}>{children}</SlotsContext.Provider>
 	);
 };
-
-export default SlotsContextProvider;

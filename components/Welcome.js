@@ -69,10 +69,7 @@ const Welcome = () => {
 				initialValues={{ slots: 0, nextTo: false }}
 				onSubmit={(values, { setSubmitting }) => {
 					handleSubmit(values.slots, values.nextTo);
-					setTimeout(() => {
-						setSubmitting(false);
-						router.push("/miejsca");
-					}, 500);
+					router.push("/miejsca");
 				}}
 			>
 				{({ isSubmitting, errors }) => (
