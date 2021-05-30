@@ -7,6 +7,10 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
   }
+	#__next{
+		display:flex;
+		justify-content:center;
+	}
 `;
 
 const theme = {
