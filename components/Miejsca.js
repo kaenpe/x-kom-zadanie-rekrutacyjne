@@ -18,9 +18,11 @@ const Square = styled.div`
 	border: 1px solid black;
 	grid-column: ${({ y }) => y + 1};
 	grid-row: ${({ x }) => x + 1};
-	background-color: ${({ reserved, id, choice }) => {
+	background-color: ${({ reserved, x, y, choice }) => {
 		const isTaken = () => {
-			return choice.filter((el) => el.id === id).length > 0 ? true : false;
+			return choice.find((el) => el.cords.y === y && el.cords.x === x)
+				? true
+				: false;
 		};
 		return reserved ? "#474747" : isTaken() ? "orange" : "inherit";
 	}};
@@ -35,21 +37,42 @@ const Miejsca = ({ seats }) => {
 	const { slots, nextTo } = useContext(SlotsContext);
 	const { choice, setChoice } = useContext(ChoiceContext);
 	useEffect(() => {
-		const filteredReserved = seats
+		const filteredReservedNoNextTo = seats
 			.filter((el) => el.reserved === false)
 			.filter((el, id) => id < slots);
-
-		nextTo ? null : setChoice(filteredReserved);
+		const filteredReservedNextTo = seats
+			.map((el, id) => {
+				if (seats[id + slots - 1])
+					return seats[id + slots - 1].cords.y === el.cords.y + slots - 1
+						? el
+						: false;
+				else return null;
+			})
+			.filter((el) => el !== false && el !== null)
+			.filter((el, id) => id < 1);
+		nextTo
+			? setChoice(
+					seats.filter(
+						(el) =>
+							el.cords.x === filteredReservedNextTo[0].cords.x &&
+							el.cords.y >= filteredReservedNextTo[0].cords.y &&
+							el.cords.y <= filteredReservedNextTo[0].cords.y + slots
+					)
+			  )
+			: setChoice(filteredReservedNoNextTo);
 	}, []);
 	//
 
 	//functions
-	const addChoiceCords = (x, y, id) => {
-		setChoice((prevState) => [...prevState, { x: x, y: y, id: id }]);
+	const addChoiceCords = (x, y) => {
+		setChoice((prevState) => [...prevState, { cords: { x: x, y: y } }]);
+		console.log(choice);
 	};
 
-	const removeChoiceCords = (id) => {
-		setChoice((prevState) => prevState.filter((el) => el.id !== id));
+	const removeChoiceCords = (x, y) => {
+		setChoice((prevState) =>
+			prevState.filter((el) => el.cords.x !== x && el.cords.y !== y)
+		);
 	};
 
 	//
@@ -63,9 +86,12 @@ const Miejsca = ({ seats }) => {
 						onClick={() =>
 							el.reserved
 								? null
-								: choice.filter((ele) => ele.id === el.id).length > 0
-								? removeChoiceCords(el.id)
-								: addChoiceCords(el.cords.x, el.cords.y, el.id)
+								: choice.find(
+										(ele) =>
+											ele.cords.x === el.cords.x && ele.cords.y === el.cords.y
+								  )
+								? removeChoiceCords(el.cords.x, el.cords.y)
+								: addChoiceCords(el.cords.x, el.cords.y)
 						}
 						x={el.cords.x}
 						y={el.cords.y}
