@@ -56,7 +56,7 @@ const Miejsca = ({ seats }) => {
 						(el) =>
 							el.cords.x === filteredReservedNextTo[0].cords.x &&
 							el.cords.y >= filteredReservedNextTo[0].cords.y &&
-							el.cords.y <= filteredReservedNextTo[0].cords.y + slots
+							el.cords.y <= filteredReservedNextTo[0].cords.y + slots - 1
 					)
 			  )
 			: setChoice(filteredReservedNoNextTo);
