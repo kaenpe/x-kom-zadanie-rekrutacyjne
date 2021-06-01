@@ -19,23 +19,16 @@ const SeatsContainer = styled.main`
 		grid-template-columns: repeat(4, 1fr);
 		grid-column: 1/16;
 		grid-row: 11;
-		.square {
-			width: ${({ height }) => `${height}px`};
-			height: ${({ height }) => `${height}px`};
-			background-color: ${({ type }) =>
-				type === "free" ? "white" : type === "reserved" ? "#474747" : "orange"};
-			border: 1px solid black;
-		}
 	}
 `;
-
-const Square = styled.div.attrs(({ height, x, y, reserved, choice }) => ({
-	style: {
-		width: `${height}px`,
-		gridColumn: y + 1,
-		gridRow: x + 1,
-	},
-}))`
+const LegendSquare = styled.div`
+	width: ${({ height }) => `${height}px`};
+	height: ${({ height }) => `${height}px`};
+	background-color: ${({ type }) =>
+		type === "free" ? "white" : type === "reserved" ? "#474747" : "orange"};
+	border: 1px solid black;
+`;
+const Square = styled.div`
 	height: 100%;
 	border: 1px solid black;
 	background-color: ${({ reserved, x, y, choice }) => {
@@ -57,7 +50,7 @@ const Miejsca = ({ seats }) => {
 	const { slots, nextTo } = useContext(SlotsContext);
 	const { choice, setChoice } = useContext(ChoiceContext);
 	const ref = useRef(null);
-	const { height, setHeight } = useDimension(ref);
+	const { height } = useDimension(ref);
 	const [floorHeight, setFloorHeight] = useState(0);
 	useEffect(() => {
 		setFloorHeight(Math.floor(height));
@@ -118,6 +111,11 @@ const Miejsca = ({ seats }) => {
 				{seats.map((el) => {
 					return (
 						<Square
+							style={{
+								width: `${height}px`,
+								gridColumn: el.cords.y + 1,
+								gridRow: el.cords.x + 1,
+							}}
 							height={floorHeight}
 							key={el.id}
 							id={el.id}
@@ -136,11 +134,19 @@ const Miejsca = ({ seats }) => {
 					);
 				})}
 				<div className="legend">
-					<div className="square" type="free">
+					<LegendSquare className="square" height={height} type="free">
 						{floorHeight}
-					</div>
-					<div className="square" type="reserved"></div>
-					<div className="square" type="choice"></div>
+					</LegendSquare>
+					<LegendSquare
+						className="square"
+						type="reserved"
+						height={height}
+					></LegendSquare>
+					<LegendSquare
+						className="square"
+						type="choice"
+						height={height}
+					></LegendSquare>
 				</div>
 			</SeatsContainer>
 		</>
