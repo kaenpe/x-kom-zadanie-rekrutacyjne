@@ -1,5 +1,9 @@
 ## Aplikacja do zarządzania rezerwacją miejsc.
 
+## Opis wykonania przeze mnie zadania
+
+Do utworzenia aplikacji zamiast wykorzystałem środowisko NEXT.js. State management został skonfigurowany poprzez Context API, a biblioteka użyta do CSS to jak w ogłoszeniu Styled Components, które jest moim faworytem jeśli chodzi o solucje do stylingu w Reactcie. Dane z API fetchowane są statycznie przy użyciu funkcjonalności NEXT.js.
+
 ### Cel zadania
 
 Celem zadania jest stworzenie aplikacji internetowej, wykorzystując biblioteki: React, Redux (lub inne rozwiązanie implementujące architekturę flux) oraz dowolny wybrany przez siebie istniejący design system (np. ant.design).
