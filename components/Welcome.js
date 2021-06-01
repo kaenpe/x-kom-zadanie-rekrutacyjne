@@ -52,7 +52,7 @@ const Welcome = () => {
 		slots: Yup.number()
 			.min(1, "Minimalnie jedno miejsce")
 			.max(5, "Maksymalnie pięć miejsc")
-			.required("Proszę wprowadzić liczbę"),
+			.required("Prosimy wprowadzić liczbę miejsc"),
 	});
 	const { setSlots, setNextTo } = useContext(SlotsContext);
 	const router = useRouter();
@@ -67,16 +67,16 @@ const Welcome = () => {
 			<Formik
 				validationSchema={SlotsSchema}
 				initialValues={{ slots: 0, nextTo: false }}
-				onSubmit={(values, { setSubmitting }) => {
+				onSubmit={(values) => {
 					handleSubmit(values.slots, values.nextTo);
 					router.push("/miejsca");
 				}}
 			>
-				{({ isSubmitting, errors }) => (
+				{({ errors }) => (
 					<Form className="form">
 						<div className="row">
 							<label htmlFor="slots">Liczba miejsc:</label>
-							<Field type="number" name="slots" />
+							<Field type="number" name="slots" touched={true} />
 						</div>
 						<ErrorRow error={errors.slots}>
 							<ErrorMessage className="error" name="slots" component="div" />
@@ -87,9 +87,7 @@ const Welcome = () => {
 						</div>
 						<div className="row">
 							{" "}
-							<button type="submit" disabled={isSubmitting}>
-								Wybierz miejsca
-							</button>
+							<button type="submit">Wybierz miejsca</button>
 						</div>
 					</Form>
 				)}

@@ -3,14 +3,15 @@ import styled from "styled-components";
 import { ChoiceContext } from "../context/ChoiceContext";
 import { SlotsContext } from "../context/SlotsContext";
 import useDimension from "../hooks/useDimension";
+import Link from "next/link";
 
 const SeatsContainer = styled.main`
 	display: grid;
 	grid-template-rows: repeat(11, 7vh);
 	grid-template-columns: ${({ height }) => `repeat(15, ${height}px)`};
-	place-items: center;
-	padding-top: 2px;
-	grid-gap: 5px;
+	place-content: center;
+	padding-top: 10px;
+	grid-gap: 10px;
 	.legend {
 		width: 100%;
 		height: 100%;
@@ -19,6 +20,22 @@ const SeatsContainer = styled.main`
 		grid-template-columns: repeat(4, 1fr);
 		grid-column: 1/16;
 		grid-row: 11;
+		.reserve-button {
+			background-color: white;
+			border: 1px solid black;
+			&:hover {
+				cursor: pointer;
+				transition: background-color 0.3s ease-in;
+				background-color: #f2f2f2;
+			}
+		}
+	}
+	.bottom-panel-wrapper {
+		display: flex;
+		align-items: center;
+		p {
+			margin-left: 10px;
+		}
 	}
 `;
 const LegendSquare = styled.div`
@@ -33,7 +50,7 @@ const Square = styled.div`
 	border: 1px solid black;
 	background-color: ${({ reserved, x, y, choice }) => {
 		const isTaken = () => {
-			return choice.find((el) => el.cords.y === y && el.cords.x === x)
+			return choice.find((seat) => seat.cords.y === y && seat.cords.x === x)
 				? true
 				: false;
 		};
@@ -57,36 +74,36 @@ const Miejsca = ({ seats }) => {
 	}, [height]);
 	useEffect(() => {
 		const filteredReservedNoNextTo = seats
-			.filter((el) => el.reserved === false)
+			.filter((seat) => seat.reserved === false)
 			.filter((el, id) => id < slots);
 		const filteredReservedNextTo = seats
-			.map((el, id) => {
+			.map((seat, id) => {
 				if (seats[id + slots - 1])
-					return seats[id + slots - 1].cords.y === el.cords.y + slots - 1
-						? el
+					return seats[id + slots - 1].cords.y === seat.cords.y + slots - 1
+						? seat
 						: false;
 				else return null;
 			})
-			.filter((el) => el !== false && el !== null)
-			.map((el, id) =>
+			.filter((seat) => seat !== false && seat !== null)
+			.map((seat, id) =>
 				seats.filter(
-					(elem) =>
-						el.cords.x === elem.cords.x &&
-						elem.cords.y <= el.cords.y + slots &&
-						elem.cords.y >= el.cords.y &&
-						elem.cords.y + slots >= el.cords.y
+					(el) =>
+						seat.cords.x === el.cords.x &&
+						el.cords.y <= seat.cords.y + slots &&
+						el.cords.y >= seat.cords.y &&
+						el.cords.y + slots >= seat.cords.y
 				)
 			)
-			.map((el) => el.filter((ele) => !ele.reserved))
-			.filter((el) => el.length === slots)
+			.map((seat) => seat.filter((ele) => !ele.reserved))
+			.filter((seat) => seat.length === slots)
 			.filter((el, id) => id < 1);
 		nextTo
 			? setChoice(
 					seats.filter(
-						(el) =>
-							el.cords.x === filteredReservedNextTo[0][0].cords.x &&
-							el.cords.y >= filteredReservedNextTo[0][0].cords.y &&
-							el.cords.y <= filteredReservedNextTo[0][0].cords.y + slots - 1
+						(seat) =>
+							seat.cords.x === filteredReservedNextTo[0][0].cords.x &&
+							seat.cords.y >= filteredReservedNextTo[0][0].cords.y &&
+							seat.cords.y <= filteredReservedNextTo[0][0].cords.y + slots - 1
 					)
 			  )
 			: setChoice(filteredReservedNoNextTo);
@@ -94,13 +111,16 @@ const Miejsca = ({ seats }) => {
 	//
 
 	//functions
-	const addChoiceCords = (x, y, id) => {
-		setChoice((prevState) => [...prevState, { cords: { x: x, y: y }, id: id }]);
+	const addChoiceCords = (seat) => {
+		setChoice((prevState) => [
+			...prevState,
+			{ cords: { x: seat.cords.x, y: seat.cords.y }, id: seat.id },
+		]);
 		console.log(choice);
 	};
 
-	const removeChoiceCords = (id) => {
-		setChoice((prevState) => prevState.filter((el) => el.id !== id));
+	const removeChoiceCords = (seat) => {
+		setChoice((prevState) => prevState.filter((el) => el.id !== seat.id));
 	};
 
 	//
@@ -108,45 +128,62 @@ const Miejsca = ({ seats }) => {
 		<>
 			{" "}
 			<SeatsContainer height={floorHeight}>
-				{seats.map((el) => {
+				{seats.map((seat) => {
 					return (
 						<Square
 							style={{
 								width: `${height}px`,
-								gridColumn: el.cords.y + 1,
-								gridRow: el.cords.x + 1,
+								gridColumn: seat.cords.y + 1,
+								gridRow: seat.cords.x + 1,
 							}}
 							height={floorHeight}
-							key={el.id}
-							id={el.id}
+							key={seat.id}
+							id={seat.id}
 							ref={ref}
 							onClick={() =>
-								choice.find((ele) => ele.id === el.id)
-									? removeChoiceCords(el.id)
-									: addChoiceCords(el.cords.x, el.cords.y, el.id)
+								choice.find((ele) => ele.id === seat.id)
+									? removeChoiceCords(seat)
+									: addChoiceCords(seat)
 							}
-							x={el.cords.x}
-							y={el.cords.y}
-							disabled={el.reserved}
+							x={seat.cords.x}
+							y={seat.cords.y}
+							disabled={seat.reserved}
 							choice={choice}
-							reserved={el.reserved}
+							reserved={seat.reserved}
 						></Square>
 					);
 				})}
 				<div className="legend">
-					<LegendSquare className="square" height={height} type="free">
-						{floorHeight}
-					</LegendSquare>
-					<LegendSquare
-						className="square"
-						type="reserved"
-						height={height}
-					></LegendSquare>
-					<LegendSquare
-						className="square"
-						type="choice"
-						height={height}
-					></LegendSquare>
+					<div className="bottom-panel-wrapper">
+						<LegendSquare
+							className="square"
+							height={height}
+							type="free"
+						></LegendSquare>
+						<p>Miejsca dostępne</p>
+					</div>
+					<div className="bottom-panel-wrapper">
+						{" "}
+						<LegendSquare
+							className="square"
+							type="reserved"
+							height={height}
+						></LegendSquare>
+						<p>Miejsca zarezerwowane</p>
+					</div>
+					<div className="bottom-panel-wrapper">
+						{" "}
+						<LegendSquare
+							className="square"
+							type="choice"
+							height={height}
+						></LegendSquare>
+						<p>Twój wybór</p>
+					</div>
+
+					<Link href="/finish">
+						<button className="reserve-button">Rezerwuj</button>
+					</Link>
 				</div>
 			</SeatsContainer>
 		</>

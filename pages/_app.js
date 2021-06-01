@@ -4,13 +4,10 @@ import { SlotsContextProvider } from "../context/SlotsContext";
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
-    padding: 0;
+    padding: 20px;
     box-sizing: border-box;
   }
-	#__next{
-		display:flex;
-		justify-content:center;
-	}
+
 `;
 
 const theme = {
